@@ -1,0 +1,86 @@
+create table books
+  (ISBN        varchar(10),
+  title      varchar(100),
+  author      varchar(20),
+  genre       varchar(100),
+  pub_ID      numeric(4, 0),
+  pages       numeric(3, 0) check(pages > 0),
+  price       numeric(3, 0) check(price > 0),
+  quantity    numeric(3, 0),
+  primary key (ISBN),
+  foreign key (pub_ID) references publisher
+      on delete cascade
+  );
+
+create table publishers
+  (pub_ID     numeric(4, 0),
+  name        varchar(100) not null,
+  bank        numeric(9),
+  address     varchar(20),
+  city        varchar(20),
+  province    varchar(2),
+  postal_code varchar(6),
+  email       varchar(40),
+  phone       varchar(10) check(phone = 10),
+  primary key (pub_ID)
+);
+
+create table users
+  (user_ID    numeric(4, 0),
+  first_name  varchar(20),
+  last_name   varchar(20),
+  username    varchar(20) not null,
+  password    varchar(8) check(password = 8),
+  address     varchar(20),
+  city        varchar(20),
+  province    varchar(2) check(province = 2),
+  postal_code varchar(6),
+  primary key (user_ID)
+  );
+
+  create table orders
+    (user_ID    numeric(4, 0),
+    ISBN        varchar(10),
+    track_No    varchar(40),
+    price       numeric(4, 0),
+    quantity    numeric(2, 0),
+    primary key (user_ID, ISBN),
+    foreign key (user_ID)  references users
+      on delete cascade,
+    foreign key (ISBN)  references books
+      on delete cascade
+  );
+
+
+CONCEPTUAL DESIGN
+Based on the information given in the problem statement my design revolve around how a book store owner would keep information. A user relation is used to store information about book store customers. Attributes in this relation are user_ID (primary key), first_name, last_name, username, address, city, province, and postal_code. The owner would also want to keep information about the publishers of the books they sell. The publishers relation has pub_ID (primary key), name, bank, address, email and phone as attributes. The most important relation in this database is the books relation which has ISBN (primary key), title, author, genre, pub_ID, pages, price and quantity as attributes. A user places an order to purchase a couple of books and this information is stored in a relation called order. user_ID, ISBN track_No, price and quantity are kept per order.
+
+
+REDUCTION TO RELATION SCHEMAS
+The book store ER-diagram is reduced into the following relation schemas.
+
+  book(ISBN, title, author, genre, pub_ID, ISBN, pages, price, quantity)
+
+  publishers(pub_ID, first_name, last_name, bank, address, city, province, postal_code, email, phone)
+
+  users(user_ID, first_name, last_name, username, password, address, city, province, postal_code)
+
+  order(user_ID, ISBN, track_No, price, quantity)
+
+
+
+NORMALIZATION OF RELATION SCHEMAS
+To check if the relations above are in good normal form, we need to check if all of the four relation schemas are in BCNF. By the textbook definition, a database design is in BCNF if each member of the set of relation schemas that constitutes the design is in BCNF. Starting with the book relation schema, we see the functional dependency below holds.
+
+  ISBN --> title, author, genre, pub_ID, pages, price, quantity
+
+Because there's no nontrivial functional dependency with any combination of title, author, genre, pub_ID, pages, price, and quantity without ISBN on the left side of the arrow. therefore, book schema is in BCNF.
+
+Similarly, all attributes in publisher and user relation schemas depend on pub_ID and user_ID respectively. This dependencies hold because ISBN, pub_ID and user_ID are primary keys of their respective schemas. Hence the publisher and user relation schemas are also in BCNF.
+
+Finally we need to determine if the order relation schema is also in BCNF. The set of keys formed by user_ID and ISBN form the superkey for this relation since both keys are foreign keys, they form the primary key for this relation. There are two nontrivial functional dependencies in this schema and both holds.
+
+  ISBN --> price
+  user_ID, ISBN --> track_No, price, quantity
+
+Since ISBN is a foreign key and form a composite primary key, the order schema is in BCNF. We have therefore shown that all members of the relation schemas are in BCNF and thus our book store database design is in BCNF.
