@@ -5,6 +5,6 @@ function submit(){
   if (bossTextBox.value == password){
     window.location.href = "/pages/addBooks.html";
   }else{
-    console.log("Wrong password!");
+    alert("Wrong password!");
   }
 }
