@@ -3,12 +3,9 @@ var serverUID = [];
 
 async function connectToDB(){
   try{
-    console.log("Successfully connected to the server");
     var result = await fetch("http://localhost:3000/getUIDs", {method:"GET"})
     serverUID = await result.json();
-    console.log(serverUID);
   }catch(e){
-    console.log("Couldn't Connect To Server");
     return false
   }
 
@@ -37,16 +34,12 @@ async function validateValues(){
     for(item of serverUID){
       if(user_ID.value === item.user_ID){
         valid = false
-        console.log("user_ID already exist");
       }
     }
     if(valid == false){
       alert("User ID is being used by another user.");
       return;
     }
-
-    console.log("Password is " + password);
-    console.log("Username is " + user_ID);
 
     if(password.value.length != MAX_CHAR || username.value.length == 0){
       alert("Password must be 8 characters long or Username cannot be null!");
@@ -76,7 +69,6 @@ async function addUser(){
   body.postal_code = postal_code.value;
 
   let result;
-
   try{
     result = await fetch("http://localhost:3000/addUser", {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(body)})
     return result.success
